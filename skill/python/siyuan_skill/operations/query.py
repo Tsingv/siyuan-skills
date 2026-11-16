@@ -16,7 +16,7 @@ class QueryOperations:
         self.client = client
 
     def sql(self, statement: str) -> OperationResult:
-        return self._run_sql(statement, columns=QUERY_COLUMNS, summary_prefix="SQL")
+        return self._run_sql(statement, columns=None, summary_prefix="SQL")
 
     def search_blocks(self, keyword: str, limit: int = 20) -> OperationResult:
         safe_keyword = keyword.replace("'", "''")
@@ -83,6 +83,8 @@ class QueryOperations:
         body = self.client.call("/api/query/sql", {"stmt": statement})
         rows = body.get("data", [])
         row_count = len(rows) if isinstance(rows, list) else 0
+        if columns is None and isinstance(rows, list):
+            columns = list(dict.fromkeys(key for row in rows if isinstance(row, dict) for key in row))
         return OperationResult(
             endpoint="/api/query/sql",
             data=rows,

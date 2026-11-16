@@ -89,7 +89,10 @@ def build_parser() -> argparse.ArgumentParser:
     doc_create.add_argument("--path", required=True)
     doc_create.add_argument("--markdown")
     doc_create.add_argument("--input-file")
-    doc_read = doc_sub.add_parser("read", parents=[runtime_parent])
+    doc_read = doc_sub.add_parser(
+        "read", parents=[runtime_parent],
+        description="导出文档 Markdown（可能展开引用）；局部块读取使用 blocks get-kramdown。",
+    )
     doc_read.add_argument("id")
     doc_export = doc_sub.add_parser("export-md", parents=[runtime_parent])
     doc_export.add_argument("id")

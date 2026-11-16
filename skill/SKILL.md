@@ -1,7 +1,8 @@
 ---
 name: siyuan
 description: This skill should be used when the user asks to "write to SiYuan", "save to SiYuan", "search SiYuan", "query SiYuan notes", "append to an existing SiYuan document", "manage SiYuan notebooks", or needs a local SiYuan Note integration through the bundled Python CLI.
-version: 0.1.0
+metadata:
+  version: 0.1.0
 ---
 
 # SiYuan Note Skill
@@ -83,6 +84,8 @@ See detailed rules in:
 
 ## Write Workflow
 
+A supplied document/block ID and an explicit section to edit already specify placement. Resolve its notebook from SiYuan only if needed; proceed with that authorized edit without asking the user to repeat the destination.
+
 Before writing to SiYuan, confirm the target notebook and placement strategy unless the user clearly accepted defaults.
 
 Supported choices:
@@ -105,6 +108,16 @@ This repository keeps the portable skill bundle under `skill/`:
 - Python package: `python/siyuan_skill/`
 
 Use the Python CLI for all new work.
+
+## Focused Reading and Editing
+
+- For a supplied block ID, start with `blocks get-kramdown <id>`. `docs read` is a Markdown **export**, which can resolve to the containing document and expand references into footnotes; use it when exported document content is wanted, not to inspect a local section.
+- Locate section headings and their content with `blocks children <id>`. Read only the relevant child subtree with `blocks get-kramdown <child-id>`. Reuse returned IDs and content instead of querying the whole document again.
+- For a section replacement, update its content/list block with `blocks update --block-id <id> --input-file <path>`, preserving the section heading and surrounding sections. Read back that changed block once to verify the result. Mutation responses may contain large DOM transaction payloads; `--format text` gives a short status, while JSON preserves the full response.
+- For cross-document discovery, select only needed SQL columns and constrain dates, document roots, block types and result count. Container blocks (`l`, `i`) duplicate descendant text; prefer `type IN ('p','h')` for prose searches and `type='d'` for document discovery. `ORDER BY sort` across a whole document does not reconstruct its tree; use child-block traversal for local order.
+- For multiple known document roots, batch them into one `root_id IN (...)` SQL query. Retain results for later drafting; repeat reads only for missing information, truncation, or verification after a change.
+
+For weekly reports and other history-based writing, read [references/history-based-editing.md](references/history-based-editing.md).
 
 ## Additional Resources
 
