@@ -117,7 +117,7 @@ Use the Python CLI for all new work.
 - For cross-document discovery, select only needed SQL columns and constrain dates, document roots, block types and result count. Container blocks (`l`, `i`) duplicate descendant text; prefer `type IN ('p','h')` for prose searches and `type='d'` for document discovery. `ORDER BY sort` across a whole document does not reconstruct its tree; use child-block traversal for local order.
 - For multiple known document roots, batch them into one `root_id IN (...)` SQL query. Retain results for later drafting; repeat reads only for missing information, truncation, or verification after a change.
 
-For weekly reports and other history-based writing, read [references/history-based-editing.md](references/history-based-editing.md).
+For weekly reports and other history-based writing, read [references/history-based-editing.md](references/history-based-editing.md). Prefer `query weekly-headings` and `query period-activity` over ad-hoc SQL. Period evidence often lives in project notes (not only `/daily note/...`). A previous report's Plan is not proof of completion; SQL/`substr`/markdown truncations are discovery hints—`blocks get-kramdown` the candidates before drafting.
 
 ## Additional Resources
 

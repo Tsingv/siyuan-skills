@@ -183,6 +183,45 @@ def build_parser() -> argparse.ArgumentParser:
     query_docs.add_argument("--limit", type=int, default=50)
     query_recent = query_sub.add_parser("recent", parents=[runtime_parent])
     query_recent.add_argument("--limit", type=int, default=20)
+    query_period = query_sub.add_parser(
+        "period-activity",
+        parents=[runtime_parent],
+        help="按 created/updated 时间窗列出活动块（不限 daily note）",
+    )
+    query_period.add_argument("--start", required=True, help="含起始，14 位时间戳")
+    query_period.add_argument("--end", required=True, help="不含结束，14 位时间戳")
+    query_period.add_argument("--types", default="p,h", help="逗号分隔 block type，默认 p,h")
+    query_period.add_argument(
+        "--keyword",
+        action="append",
+        default=None,
+        help="content LIKE 关键词，可重复；多项之间 OR",
+    )
+    query_period.add_argument(
+        "--hpath-like",
+        action="append",
+        default=None,
+        help="hpath LIKE 片段，可重复；与 keyword 一并 OR",
+    )
+    query_period.add_argument(
+        "--preview-chars",
+        type=int,
+        default=240,
+        help="content 预览截断长度；0 表示返回全文列",
+    )
+    query_period.add_argument("--limit", type=int, default=100)
+    query_period.add_argument(
+        "--before-updated",
+        default=None,
+        help="分页：只返回 updated 小于该时间戳的行",
+    )
+    query_weekly = query_sub.add_parser(
+        "weekly-headings",
+        parents=[runtime_parent],
+        help="定位近期周报标题块",
+    )
+    query_weekly.add_argument("--title-like", default="周报")
+    query_weekly.add_argument("--limit", type=int, default=15)
 
     attrs = subparsers.add_parser("attrs", parents=[runtime_parent])
     attr_sub = attrs.add_subparsers(dest="action", required=True)
@@ -483,6 +522,19 @@ def dispatch(args: argparse.Namespace, client: SiYuanClient) -> OperationResult:
             return query.list_all_docs(args.limit)
         if args.action == "recent":
             return query.recent_blocks(args.limit)
+        if args.action == "period-activity":
+            return query.period_activity(
+                args.start,
+                args.end,
+                types=args.types,
+                keyword=args.keyword,
+                hpath_like=args.hpath_like,
+                preview_chars=args.preview_chars,
+                limit=args.limit,
+                before_updated=args.before_updated,
+            )
+        if args.action == "weekly-headings":
+            return query.weekly_headings(args.title_like, args.limit)
 
     if args.command == "attrs":
         if args.action == "get":

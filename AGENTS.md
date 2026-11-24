@@ -248,6 +248,10 @@ Token 缓存位置：
 并使用：
 - `--message-timeout`
 
+`query` 组额外包含周报证据检索：
+- `query period-activity`（`--start`/`--end`，可选 `--keyword`/`--hpath-like`/`--types`/`--before-updated`）
+- `query weekly-headings`
+
 ---
 
 ## 已验证的代表命令
@@ -261,6 +265,8 @@ python3 skill/scripts/siyuan_cli.py docs read <doc_id> --format text
 python3 skill/scripts/siyuan_cli.py docs get-path <doc_id> --format json
 python3 skill/scripts/siyuan_cli.py blocks info <block_id> --format json
 python3 skill/scripts/siyuan_cli.py query recent --limit 1 --format json
+python3 skill/scripts/siyuan_cli.py query weekly-headings --limit 3 --format json
+python3 skill/scripts/siyuan_cli.py query period-activity --start 20261116000000 --end 20261123000000 --keyword Passkey --limit 5 --format json
 python3 skill/scripts/siyuan_cli.py system version --format text
 python3 skill/scripts/siyuan_cli.py tags list --format markdown
 python3 skill/scripts/siyuan_cli.py bookmarks list --format markdown
